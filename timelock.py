@@ -5,7 +5,7 @@ from Crypto.Util.number import getStrongPrime
 from Crypto.Random import get_random_bytes
 
 
-def encrypt(message: bytes, num_squarings: int, prime_bits=1024):
+def encrypt(message: bytes, num_squarings: int, prime_bits=2048):
     p = getStrongPrime(prime_bits)
     q = getStrongPrime(prime_bits)
 
@@ -59,19 +59,20 @@ def decrypt(message):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('type', choices=['encrypt', 'decrypt'])
-    parser.add_argument('file', type=argparse.FileType('rb'))
-    parser.add_argument('--num-squarings', type=int, default=10 ** 6,
-                        help='Number of squarings that should be required to decrypt the message. This is proportional to the time required to decrypt. This option is only relevant when encrypting.')
+    parser.add_argument('input_file', type=str)
+    parser.add_argument('output_file', type=str)
+    parser.add_argument('--num-squarings', type=int, default=250000 * 60 * 60 * 24 * 7,
+                        help='Number of squarings that should be required to decrypt the message. This is proportional to the time required to decrypt. This option is only relevant when encrypting. The default value results in about a week of computation time for an optimized program (see benchmark folder).')
     args = parser.parse_args()
 
     if args.type == 'encrypt':
-        message = args.file.read()
+        message = open(args.input_file, 'rb').read()
         encrypted_message = encrypt(message, args.num_squarings)
-        print(json.dumps(encrypted_message))
+        open(args.output_file, 'w').write(json.dumps(encrypted_message))
     elif args.type == 'decrypt':
-        encrypted_message = json.load(args.file)
+        encrypted_message = json.load(open(args.input_file))
         message = decrypt(encrypted_message)
-        print(message)
+        open(args.output_file, 'wb').write(message)
 
 
 if __name__ == '__main__':
