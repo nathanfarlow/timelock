@@ -61,7 +61,7 @@ def main():
     parser.add_argument('type', choices=['encrypt', 'decrypt'])
     parser.add_argument('input_file', type=str)
     parser.add_argument('output_file', type=str)
-    parser.add_argument('--num-squarings', type=int, default=250000 * 60 * 60 * 24 * 7,
+    parser.add_argument('--num-squarings', type=int, default=300000 * 60 * 60 * 24 * 7,
                         help='Number of squarings that should be required to decrypt the message. This is proportional to the time required to decrypt. This option is only relevant when encrypting. The default value results in about a week of computation time for an optimized program (see benchmark folder).')
     args = parser.parse_args()
 
